@@ -1,5 +1,8 @@
 config.yml
 
+*.jpeg
+*.jpg
+*.jpg
 
 # PYTHON
 # Byte-compiled / optimized / DLL files
