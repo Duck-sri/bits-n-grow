@@ -20,7 +20,7 @@ class Journal(models.Model):
   name = models.CharField(max_length=100,null=False)
   user = models.ForeignKey(User,on_delete=models.CASCADE)
   descrpiption = models.TextField(max_length=500)
-  created = models.DateTimeField(null=False)
+  created = models.DateTimeField(null=False,db_index=True)
 
 
   def __str__(self):
@@ -60,7 +60,7 @@ class Habits(models.Model):
   )
   count_a_day = models.IntegerField(default=1,null=False)
 
-  created = models.DateTimeField(null=False)
+  created = models.DateTimeField(null=False,db_index=True)
   completed = models.IntegerField(default=0,null=False)
   skipped = models.IntegerField(default=0,null=False)
   failed = models.IntegerField(default=0,null=False)
@@ -85,7 +85,7 @@ class MoodLogs(models.Model):
     default=MOODS.NONE.value,
     null=False
   )
-  created = models.DateTimeField(null=False)
+  created = models.DateTimeField(null=False,db_index=True)
   note = models.TextField(null=False,default="")    
 
   def __str__(self): return self.mood

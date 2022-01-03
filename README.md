@@ -17,6 +17,6 @@ database:
 
 ## TODO
 * ~~Get the basic configured~~
-* Write the backend
+* ~~Write the backend~~
 * Get models and cruds straight
 * Init React with Redux

@@ -1,7 +1,7 @@
 from django.urls import path
 
-from . import views
+from .views import GET,POST,PUT,DELETE,OTHER
 
 urlpatterns = [
-  path('',views.getHi,name="Hello world")
-]
+
+] + GET + POST + PUT + DELETE + OTHER

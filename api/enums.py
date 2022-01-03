@@ -23,3 +23,8 @@ class LOG_STATUS(TextChoices):
   COMPLETED = 'completed'
   FAIL = 'fail'
   SKIP = 'skip'
+
+class Gender(TextChoices):
+  MALE = 'Male'
+  FEMALE = 'Female'
+  PRIVACY = 'Preffered not to say'
