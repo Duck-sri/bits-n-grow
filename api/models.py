@@ -1,24 +1,33 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.fields.related import OneToOneField, create_many_to_many_intermediary_model
-
-from app.settings import DATABASES
+from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
 from .enums import *
+from .managers import HabiterManager
 # Create your models here.
 
+class Habiter(AbstractUser):
+  username = models.CharField(max_length=32,null=False,unique=True)
+  email = models.EmailField(('Email Address'),unique=True,null=False)
+  is_active = models.BooleanField(default=True)
+  date_joined = models.DateTimeField(default=timezone.now)
+  dob = models.DateField(null=True)
+  avatar = models.ImageField(null=True)
 
-class UserProfile(models.Model):
-  user   = models.OneToOneField(User,on_delete=models.CASCADE)
-  dob = models.DateField()
-  avatar = models.ImageField()
+  objects = HabiterManager()
 
-  class Meta:
-    db_table = 'user_profiles'
+  USERNAME_FIELD = 'username'
+  REQUIRED_FIELDS = ['email']
+
+  def __str__(self): return self.username
+
+  def save(self, *args, **kwargs):
+    super(Habiter, self).save(*args, **kwargs)
+    return self
 
 class Journal(models.Model):
   name = models.CharField(max_length=100,null=False)
-  user = models.ForeignKey(User,on_delete=models.CASCADE)
+  user = models.ForeignKey(Habiter,on_delete=models.CASCADE)
   descrpiption = models.TextField(max_length=500)
   created = models.DateTimeField(null=False,db_index=True)
 

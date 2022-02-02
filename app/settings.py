@@ -31,7 +31,8 @@ SECRET_KEY = config['django_api_key']
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost'
+    'localhost',
+    '127.0.0.1'
 ]
 
 
@@ -47,6 +48,8 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 
     # my apps
     'api.apps.ApiConfig',
@@ -150,3 +153,13 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'api.Habiter'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENICATION_CLASSES': [
+        'rest_framework.authenication.BasicAuthenication',
+        # 'rest_framework.authenication.SessionAuthenication',
+        'rest_framework.authenication.TokenAuthenication',
+    ]
+}

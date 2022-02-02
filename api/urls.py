@@ -1,7 +1,12 @@
 from django.urls import path
+from rest_framework import routers
 
-from .views import GET,POST,PUT,DELETE,OTHER
+from .views import OTHER,JournalViewSet,HabiterViewSet
 
-urlpatterns = [
+router = routers.DefaultRouter()
+router.register('journals',JournalViewSet)
+router.register('users',HabiterViewSet)
 
-] + GET + POST + PUT + DELETE + OTHER
+urlpatterns = router.urls + OTHER + [
+
+]
