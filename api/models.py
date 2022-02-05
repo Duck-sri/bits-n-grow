@@ -1,39 +1,23 @@
+from socket import timeout
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser,Group,User
+from sqlalchemy import true
 
 from .enums import *
-from .managers import HabiterManager
 # Create your models here.
 
-class Habiter(AbstractUser):
-  username = models.CharField(max_length=32,null=False,unique=True)
-  email = models.EmailField(('Email Address'),unique=True,null=False)
-  is_active = models.BooleanField(default=True)
-  date_joined = models.DateTimeField(default=timezone.now)
-  dob = models.DateField(null=True)
-  avatar = models.ImageField(null=True)
-
-  objects = HabiterManager()
-
-  USERNAME_FIELD = 'username'
-  REQUIRED_FIELDS = ['email']
-
-  def __str__(self): return self.username
-
-  def save(self, *args, **kwargs):
-    super(Habiter, self).save(*args, **kwargs)
-    return self
+# User is already used from django
 
 class Journal(models.Model):
   name = models.CharField(max_length=100,null=False)
-  user = models.ForeignKey(Habiter,on_delete=models.CASCADE)
-  descrpiption = models.TextField(max_length=500)
-  created = models.DateTimeField(null=False,db_index=True)
+  user = models.ForeignKey(User,on_delete=models.CASCADE)
+  descrpiption = models.TextField(max_length=500,blank=True,default="")
+  created = models.DateTimeField(default=timezone.now,null=False,db_index=True)
 
 
   def __str__(self):
-    return f"{self.name}\n\t{self.descrpiption}"
+    return f"{self.name}"
 
   class Meta:
     db_table = 'journals'
@@ -42,7 +26,7 @@ class Journal(models.Model):
 
 class Area(models.Model):
   name = models.CharField(max_length=30,null=False)
-  created = models.DateField(null=False)
+  created = models.DateField(default=timezone.now,null=False)
 
   def __str__(self):
     return self.name
@@ -54,7 +38,7 @@ class Area(models.Model):
   
 class Habits(models.Model):
   name = models.CharField(max_length=100,null=False)
-  description = models.TextField()
+  description = models.TextField(blank=True,default="")
   journal = models.ForeignKey(Journal,on_delete=models.CASCADE)
   notion = models.CharField(
     max_length=10,
@@ -69,7 +53,7 @@ class Habits(models.Model):
   )
   count_a_day = models.IntegerField(default=1,null=False)
 
-  created = models.DateTimeField(null=False,db_index=True)
+  created = models.DateTimeField(default=timezone.now,null=False,db_index=True)
   completed = models.IntegerField(default=0,null=False)
   skipped = models.IntegerField(default=0,null=False)
   failed = models.IntegerField(default=0,null=False)
@@ -79,7 +63,7 @@ class Habits(models.Model):
     return self.completed + self.failed + self.skipped
 
   def __str__(self):
-    return f"{self.name}\n\t{self.description}"
+    return f"{self.name}"
 
   class Meta:
     db_table = 'habits'
@@ -94,10 +78,10 @@ class MoodLogs(models.Model):
     default=MOODS.NONE.value,
     null=False
   )
-  created = models.DateTimeField(null=False,db_index=True)
-  note = models.TextField(null=False,default="")    
+  created = models.DateTimeField(default=timezone.now,null=False,db_index=True)
+  note = models.TextField(blank=False,default="")    
 
-  def __str__(self): return self.mood
+  def __str__(self): return f"{self.mood} {self.created}"
 
   class Meta:
     db_table = 'mood_logs'
@@ -106,12 +90,17 @@ class MoodLogs(models.Model):
 
 class HabitLog(models.Model):
   habit = models.ForeignKey(Habits,on_delete=models.CASCADE)
-  time = models.DateTimeField(null=False)
+  time = models.DateTimeField(default=timezone.now,null=False,db_index=True)
   status = models.CharField(
     max_length=10,
     choices=[(tag.value,tag.value) for tag in LOG_STATUS]
   )
-  notes = models.TextField(default="")
+  notes = models.TextField(default="",blank=True,null=True)
+
+  def __str__(self):
+    habit_name = self.habit.name
+    time = self.time
+    return f"{habit_name} : {time}"
 
   class Meta:
     db_table = 'habit_logs'

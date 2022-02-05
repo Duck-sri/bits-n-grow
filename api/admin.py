@@ -4,7 +4,7 @@ from . import models
 # Register your models here.
 
 admin.site.register([
-  models.Habiter,
+  # models.User, # already registerd by admin
   models.Journal,
   models.Area,
   models.Habits,
